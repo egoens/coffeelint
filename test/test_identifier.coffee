@@ -35,6 +35,8 @@ vows.describe('identifiers').addBatch({
         topic : """
             class animal
 
+            class Animal
+
             class wolf extends Animal
 
             class Burmese_Python extends Animal

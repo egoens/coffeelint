@@ -6,7 +6,12 @@ coffeelint = require path.join('..', 'lib', 'coffeelint')
 
 # Return the cyclomatic complexity of a code snippet with one function.
 getComplexity = (source) ->
-    config = {cyclomatic_complexity : {level: 'error', value: 0}}
+    config =
+        undefined_variable:
+            level: 'ignore'
+        cyclomatic_complexity:
+            level: 'error'
+            value: 0
     errors = coffeelint.lint(source, config)
     assert.isNotEmpty(errors)
     assert.lengthOf(errors, 1)
@@ -244,7 +249,11 @@ vows.describe('cyclomatic complexity').addBatch({
             """
 
         'works' : (source) ->
-            config = {cyclomatic_complexity : {level: 'error'}}
+            config =
+                undefined_variable:
+                    level: 'ignore'
+                cyclomatic_complexity:
+                    level: 'error'
             errors = coffeelint.lint(source, config)
             assert.isArray(errors)
             assert.lengthOf(errors, 1)

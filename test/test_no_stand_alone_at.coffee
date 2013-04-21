@@ -9,6 +9,8 @@ vows.describe('stand alone @').addBatch({
 
         topic : () ->
             """
+            ok="ok"
+            notok="notok"
             @alright
             @   .error
             @ok()
@@ -29,13 +31,13 @@ vows.describe('stand alone @').addBatch({
             assert.isArray(errors)
             assert.lengthOf(errors, 3)
             error = errors[0]
-            assert.equal(error.lineNumber, 2)
-            assert.equal(error.rule, 'no_stand_alone_at')
-            error = errors[1]
             assert.equal(error.lineNumber, 4)
             assert.equal(error.rule, 'no_stand_alone_at')
+            error = errors[1]
+            assert.equal(error.lineNumber, 6)
+            assert.equal(error.rule, 'no_stand_alone_at')
             error = errors[2]
-            assert.equal(error.lineNumber, 7)
+            assert.equal(error.lineNumber, 9)
             assert.equal(error.rule, 'no_stand_alone_at')
 
 }).export(module)

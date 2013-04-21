@@ -117,6 +117,8 @@ vows.describe('indent').addBatch({
     'Indentation on seperate line invocation' :
 
         topic : """
+            rockinRockin = rockrockrock = {}
+
             rockinRockin
                     .around ->
                       3
@@ -152,12 +154,16 @@ vows.describe('indent').addBatch({
             """
 
         'are permitted' : (source) ->
-            errors = coffeelint.lint(source)
+            config =
+                undefined_variable:
+                    level: 'ignore'
+            errors = coffeelint.lint(source, config)
             assert.isEmpty(errors)
 
     'Indenting a callback in a chained call inside a function':
 
         topic: """
+            somePromise = $.Deferred()
             someFunction = ->
               $.when(somePromise)
                 .done (result) ->

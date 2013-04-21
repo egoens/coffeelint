@@ -36,7 +36,11 @@ vows.describe('coffeelint').addBatch({
         '''
 
         'are reported' : (source) ->
-            errors = coffeelint.lint(source)
+            config =
+                undefined_variable:
+                    level : 'ignore'
+
+            errors = coffeelint.lint(source, config)
             assert.isArray(errors)
             assert.lengthOf(errors, 1)
             error = errors[0]

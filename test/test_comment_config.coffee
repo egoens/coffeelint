@@ -9,6 +9,7 @@ vows.describe('comment config').addBatch({
 
         topic : () ->
             """
+            a = b = c = (string) -> return string
             # coffeelint: disable=no_trailing_semicolons
             a 'you get a semi-colon';
             b 'you get a semi-colon';
@@ -26,6 +27,7 @@ vows.describe('comment config').addBatch({
 
         topic : () ->
             """
+            a = b = c = (string) -> return string
             # coffeelint: enable=no_implicit_parens
             a 'implicit parens here'
             b 'implicit parens', 'also here'
@@ -40,6 +42,7 @@ vows.describe('comment config').addBatch({
     'Enable all statements' :
         topic : () ->
             """
+            a = b = c = (string) -> return string
             # coffeelint: disable=no_trailing_semicolons,no_implicit_parens
             a 'you get a semi-colon';
             b 'you get a semi-colon';

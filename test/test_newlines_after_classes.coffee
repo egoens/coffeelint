@@ -13,7 +13,7 @@ vows.describe('newlines_after_classes').addBatch({
                 class Foo
                     
                     constructor: () ->
-                        bla()
+                        @bla = "foo"
                     
                     a: "b"
                     c: "d"

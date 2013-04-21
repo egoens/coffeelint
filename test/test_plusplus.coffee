@@ -9,6 +9,7 @@ vows.describe('plusplus').addBatch({
     'The increment and decrement operators' :
 
         topic : '''
+            x = y = 0
             y++
             ++y
             x--
@@ -25,7 +26,7 @@ vows.describe('plusplus').addBatch({
             assert.isArray(errors)
             assert.lengthOf(errors, 4)
             error = errors[0]
-            assert.equal(error.lineNumber, 1)
+            assert.equal(error.lineNumber, 2)
             assert.equal(error.rule, 'no_plusplus')
 
 }).export(module)

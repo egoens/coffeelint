@@ -9,6 +9,7 @@ vows.describe('spacing').addBatch({
 
         topic : ->
             '''
+            b=1
             x=1
             1+1
             1-1
@@ -42,6 +43,7 @@ vows.describe('spacing').addBatch({
 
         topic : ->
             '''
+            a = b = 1
             x = 1
             1 + 1
             1 - 1

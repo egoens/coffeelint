@@ -108,6 +108,10 @@ coffeelint.RULES = RULES =
         level : ERROR
         message : 'Duplicate key defined in object or class'
 
+    undefined_variable:
+        level : ERROR
+        message : "Undefined variable"
+
     newlines_after_classes :
         value : 3
         level : IGNORE
@@ -383,6 +387,16 @@ class LexicalLinter
         @callTokens = []    # A stack tracking the call token pairs.
         @lines = source.split('\n')
         @braceScopes = []   # A stack tracking keys defined in nexted scopes.
+        @currentScope = {
+            'variable-Array': true
+            'variable-console': true
+            'variable-require': true
+            'variable-window': true
+            'variable-module': true
+            'variable-RegExp': true
+            'variable-$': true
+
+        }
 
     # Return a list of errors encountered in the given source.
     lint : () ->
@@ -417,7 +431,7 @@ class LexicalLinter
             when "(", ")"                 then @lintParens(token)
             when "JS"                     then @lintJavascript(token)
             when "CALL_START", "CALL_END" then @lintCall(token)
-            when "PARAM_START"            then @lintParam(token)
+            when "PARAM_START", "PARAM_END"    then @lintParam(token)
             when "@"                      then @lintStandaloneAt(token)
             when "+", "-"                 then @lintPlus(token)
             when "=", "MATH", "COMPARE", "LOGIC"
@@ -499,27 +513,55 @@ class LexicalLinter
             return null
 
     lintParam : (token) ->
+        @definingParameters = (token[0] == 'PARAM_START')
         nextType = @peek()[0]
-        if nextType == 'PARAM_END'
+        if token[0] == 'PARAM_START' and nextType == 'PARAM_END'
             @createLexError('no_empty_param_list')
-        else
-            null
 
     lintIdentifier: (token) ->
+        nextToken = @peek(1)
+        previousToken = @peek(-1)
+        if nextToken[1] == ':'
+            @lintKeyIdentifier(token)
+        else if nextToken[1] == '=' or previousToken?[0] in [ 'CLASS', 'FOR' ] or @definingParameters
+            @lintVariableIdentifier(token)
+        else
+            @lintUseVariableIdentifier(token)
+
+    lintUseVariableIdentifier: (token) ->
+        previousToken = @peek(-1)
+        return null if previousToken?[0] in [ '@', '.' ]
+        nextToken = @peek(1)
+        # The existential operator is for determining if the variable exists
+        # and is set.  don't warn about undefined variables here.
+        return null if nextToken?[0] == '?'
+        key = token[1]
+        key = "variable-#{key}"
+        if not @currentScope[key]?
+            for scope in @braceScopes
+                return null if scope[key]?
+            attrs = {
+                message: "Undefined variable: "+token[1]
+            }
+            @createLexError('undefined_variable', attrs)
+
+    lintVariableIdentifier: (token) ->
+        previousToken = @peek(-1)
+        # If assigning to an obect the scope can't be determined
+        return null if previousToken?[0] in [ '@', '.' ]
+        key = token[1]
+        key = "variable-#{key}"
+        @currentScope[key] = token
+        null
+
+    lintKeyIdentifier: (token) ->
         key = token[1]
 
-        # Class names might not be in a scope
         return null if not @currentScope?
-        nextToken = @peek(1)
-
-        # Exit if this identifier isn't being assigned. A and B
-        # are identifiers, but only A should be examined:
-        # A = B
-        return null if nextToken[1] isnt ':'
         previousToken = @peek(-1)
 
         # Assigning "@something" and "something" are not the same thing
-        key = "@#{key}" if previousToken[0] == '@'
+        key = "@#{key}" if previousToken?[0] == '@'
 
         # Added a prefix to not interfere with things like "constructor".
         key = "identifier-#{key}"
