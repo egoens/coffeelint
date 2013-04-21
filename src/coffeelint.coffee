@@ -88,6 +88,10 @@ coffeelint.RULES = RULES =
         value : 'unix' # or 'windows'
         message : 'Line contains incorrect line endings'
 
+    no_nested_implicit_parens:
+        level : IGNORE
+        message : 'Implicit parens in function parameters are forbidden'
+
     no_implicit_parens :
         level : IGNORE
         message : 'Implicit parens are forbidden'
@@ -485,16 +489,23 @@ class LexicalLinter
 
     lintCall : (token) ->
         if token[0] == 'CALL_START'
+            @callNesting = (@callNesting or 0) + 1
             p = @peek(-1)
             # Track regex calls, to know (approximately) if we're in an
             # extended regex.
             token.isRegex = p and p[0] == 'IDENTIFIER' and p[1] == 'RegExp'
             @callTokens.push(token)
             if token.generated
+
+                if @callNesting > 1
+                    err = @createLexError('no_nested_implicit_parens')
+                    return err if err?
+
                 return @createLexError('no_implicit_parens')
             else
                 return null
         else
+            @callNesting -= 1
             @callTokens.pop()
             return null
 
