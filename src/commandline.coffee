@@ -11,7 +11,17 @@ fs   = require("fs")
 glob = require("glob")
 optimist = require("optimist")
 thisdir = path.dirname(fs.realpathSync(__filename))
-coffeelint = require(path.join(thisdir, "..", "lib", "coffeelint"))
+
+try
+    # If this was installed from an npm package there will be a javascript copy
+    # of coffeelint.
+    coffeelint = require(path.join(thisdir, "..", "lib", "coffeelint"))
+catch e
+    throw e unless e.code is 'MODULE_NOT_FOUND'
+    # If this was installed from a git repo this will fall back to loading the
+    # original source.
+    require 'coffee-script'
+    coffeelint = require(path.join(thisdir, "..", "src", "coffeelint"))
 
 
 # Return the contents of the given file synchronously.

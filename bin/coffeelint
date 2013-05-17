@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+// This file is a stub so that CoffeeLint can be installed directly from a git
+// repo.
+
+(function() {
+    var path = require("path");
+    var fs = require("fs");
+    var thisdir = path.dirname(fs.realpathSync(__filename));
+
+    try {
+        // If this was installed from an npm package there will be a javascript copy
+        // of coffeelint.
+        require(path.join(thisdir, "..", "lib", "commandline"));
+    } catch (e) {
+        if (e.code !== 'MODULE_NOT_FOUND') {
+            throw e;
+        }
+        // If this was installed from a git repo this will fall back to loading the
+        // original source.
+        require('coffee-script');
+        require(path.join(thisdir, "..", "src", "commandline"));
+    }
+}());
