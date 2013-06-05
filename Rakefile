@@ -35,22 +35,34 @@ end
 
 desc "Compile the source."
 task :compile do
-  sh("node_modules/.bin/coffee -c -o lib src")
+
+  # If this is being installed from a git repo the coffeemodule amy not
+  # exist here yet.
+  if File.exists? 'node_modules/.bin/coffee'
+    sh("node_modules/.bin/coffee -c -o lib src")
+  else
+    sh("coffee -c -o lib src")
+  end
+
   # Add a hack for adding node shebang.
   node='#!/usr/bin/env node'
+  sh("mkdir -p bin")
   sh("echo '#{node}' | cat - lib/commandline.js > bin/coffeelint")
   sh("chmod +x bin/coffeelint")
   sh("rm lib/commandline.js")
   notify("compiled!")
 end
 
+desc "preinstall: Only needed if installing direct from a git repo"
+task :preinstall do
+  if not File.exists? 'bin/coffeelint'
+      Rake::Task["compile"].invoke
+  end
+end
+
 desc "Publish the package."
 task :publish => [:default] do
   sh("npm publish")
-end
-
-task :tokenize do
-  sh "./utils/tokenize ./utils/test.coffee"
 end
 
 task :default => [:compile, :test, :lint]
