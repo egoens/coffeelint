@@ -1,48 +1,48 @@
 {
   "name": "coffeelint",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "dependencies": {
     "optimist": {
-      "version": "0.3.5",
+      "version": "0.5.2",
+      "from": "optimist@>=0.2.8",
+      "resolved": "https://registry.npmjs.org/optimist/-/optimist-0.5.2.tgz",
       "dependencies": {
         "wordwrap": {
-          "version": "0.0.2"
+          "version": "0.0.2",
+          "from": "wordwrap@~0.0.2"
         }
       }
     },
     "coffee-script": {
-      "version": "1.4.0"
+      "version": "1.6.3",
+      "from": "coffee-script@>=1.4.0"
     },
     "glob": {
-      "version": "3.1.14",
+      "version": "3.2.1",
+      "from": "glob@>=3.1.9",
       "dependencies": {
         "minimatch": {
-          "version": "0.2.9",
+          "version": "0.2.12",
+          "from": "minimatch@~0.2.11",
           "dependencies": {
             "lru-cache": {
-              "version": "2.0.4"
+              "version": "2.3.0",
+              "from": "lru-cache@2"
             },
             "sigmund": {
-              "version": "1.0.0"
+              "version": "1.0.0",
+              "from": "sigmund@~1.0.0"
             }
           }
         },
         "graceful-fs": {
-          "version": "1.1.14"
+          "version": "1.2.2",
+          "from": "graceful-fs@~1.2.0",
+          "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-1.2.2.tgz"
         },
         "inherits": {
-          "version": "1.0.0"
-        }
-      }
-    },
-    "vows": {
-      "version": "0.7.0",
-      "dependencies": {
-        "eyes": {
-          "version": "0.1.8"
-        },
-        "diff": {
-          "version": "1.0.4"
+          "version": "1.0.0",
+          "from": "inherits@1"
         }
       }
     }
