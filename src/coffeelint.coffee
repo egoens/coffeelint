@@ -104,6 +104,14 @@ coffeelint.RULES = RULES =
             Two space indentation is enabled by default.
             """
 
+    blank_lines:
+        min: 1
+        max: 2
+        level: IGNORE
+        message: "Wrong number of blank lines separating code."
+        description: """
+        """
+
     no_implicit_braces :
         level : IGNORE
         message : 'Implicit braces are forbidden'
@@ -386,7 +394,8 @@ class LineLinter
                @checkTrailingSemicolon() or
                @checkLineEndings() or
                @checkComments() or
-               @checkNewlinesAfterClasses()
+               @checkNewlinesAfterClasses() or
+               @checkBlankLines()
 
     checkTabs : () ->
         # Only check lines that have compiled tokens. This helps
@@ -424,6 +433,40 @@ class LineLinter
                 return null
         else
             return null
+
+    checkBlankLines: ->
+        if @lineNumber < @lastCheckedBlankLine
+            return
+
+        blank = @line.trim().length is 0
+
+        # console.log @line, @lineHasToken()
+        {min, max} = @config.blank_lines
+        if blank
+            @blankCounter += 1
+            if @blankCounter > max
+                attrs =
+                    context: "Too many blank lines #{@blankCounter}, " +
+                    "max is #{max}"
+                return @createLineError('blank_lines', attrs)
+        else
+            # If the last token on a line spans multiple lines, skip all of
+            # those lines even if they are blank. This prevents CoffeeLint from
+            # producing errors when a long string contains blank lines.
+            tokens = @tokensByLine[@lineNumber]
+            # Lines that contain only a comment don't contain any tokens.
+            if tokens?
+                lastToken = tokens[tokens.length - 1]
+                @lastCheckedBlankLine = lastToken[2].last_line
+
+            counter = @blankCounter
+            @blankCounter = 0
+
+            if 1 <= counter < min
+                attrs =
+                    context: "Too few blank lines #{@blankCounter}, " +
+                    "min is #{min}"
+                return @createLineError('blank_lines', attrs)
 
     checkLineLength : () ->
         rule = 'max_line_length'
