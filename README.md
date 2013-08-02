@@ -2,7 +2,7 @@ CoffeeLint
 ==========
 
 CoffeeLint is a style checker that helps keep CoffeeScript code
-clean and consistent.
+clean, consistent & awesome.
 
 For guides on installing, using and configuring CoffeeLint, head over
 [here](http://www.coffeelint.org).
